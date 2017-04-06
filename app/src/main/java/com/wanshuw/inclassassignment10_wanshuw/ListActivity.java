@@ -25,7 +25,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         database = FirebaseDatabase.getInstance();
-        postsRef = database.getReference("posts");
+        postsRef = database.getReference("posts.");
 
         posts = new ArrayList<>();
         display = (TextView) findViewById(R.id.display);
