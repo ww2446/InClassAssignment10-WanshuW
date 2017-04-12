@@ -1,5 +1,6 @@
 package com.wanshuw.inclassassignment10_wanshuw;
 
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -11,3 +12,4 @@ public class StorageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_storage);
     }
 }
+
