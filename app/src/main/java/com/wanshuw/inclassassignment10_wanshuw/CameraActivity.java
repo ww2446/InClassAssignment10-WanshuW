@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +33,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private File photoFile;
+    private Uri fileToUpload;
     private StorageReference mStorageRef;
 
     @Override
@@ -50,7 +52,7 @@ public class CameraActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
 
-            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+         startActivityForResult(intent, REQUEST_TAKE_PHOTO);
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
@@ -59,7 +61,7 @@ public class CameraActivity extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.wanshu.inclassassignment10_wanshuw",
+                        "com.wanshuw.inclassassignment10_wanshuw",
                         photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(intent, REQUEST_TAKE_PHOTO);
@@ -70,14 +72,16 @@ public class CameraActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPEG_" + timeStamp + ".jpg";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        return image;
+        return new File(storageDir.getAbsolutePath()+"/" + imageFileName);
+
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//        return image;
     }
 
     public void pickPhoto(View view) {
@@ -94,64 +98,51 @@ public class CameraActivity extends AppCompatActivity {
             return;
 
         if (requestCode == REQUEST_TAKE_PHOTO) {
-            try {
-                decodeUri(Uri.parse(photoFile.toURI().toString()));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+
+                fileToUpload = Uri.parse(photoFile.toURI().toString());
+
+
         } else if (requestCode == REQUEST_PICK_PHOTO) {
-            try {
-                decodeUri(data.getData());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+
+                fileToUpload = data.getData();
+
             }
-        }
+
+        Picasso.with(this).load(fileToUpload).resize(imageView.getWidth(),imageView.getHeight()).centerInside();
+
     }
 
-    public void decodeUri(Uri uri) throws FileNotFoundException {
 
-        // Get the dimensions of the View
-        int targetW = imageView.getWidth();
-        int targetH = imageView.getHeight();
 
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        // I just want to know the dimension, don't pass me the pixels yet!
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, bmOptions);
+    public void upload(View view) {
+      if (fileToUpload != null){
+          StorageReference uploadRef = mStorageRef.child("image/upload.jpg");
 
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
+          uploadRef.putFile(fileToUpload)
+          .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>(){
+              @Override
+              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot){
+                  @SuppressWarnings("VisibleForTest")
+                          Uri downlloadUri = taskSnapshot.getDownloadUrl();
+                  Toast.makeText(CameraActivity.this,"Upload successful!",Toast.LENGTH_SHORT).show();
+              }
 
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+          })
+                  .addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
 
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
+                          Toast.makeText(CameraActivity.this,"Upload Fail",Toast.LENGTH_SHORT).show();
+                      }
 
-        Bitmap image = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, bmOptions);
-        imageView.setImageBitmap(image);
-    }
+          });
+      }
+        else{
+          Toast.makeText(this, "No photo",Toast.LENGTH_SHORT).show();
 
-    public void uploadPhoto(View view) {
-        Uri file = Uri.fromFile(new File("path/to/Photos.jpg"));
+      }
 
-        StorageReference filePath = mStorageRef.child("Photos").child(file.getLastPathSegment());
 
-        filePath.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                Toast.makeText(CameraActivity.this, "Upload Done", Toast.LENGTH_SHORT).show();
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        // ...
-                    }
-                });
-    }
+      }
+
 }
