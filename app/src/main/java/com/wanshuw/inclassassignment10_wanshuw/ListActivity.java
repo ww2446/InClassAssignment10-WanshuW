@@ -2,9 +2,10 @@ package com.wanshuw.inclassassignment10_wanshuw;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -14,118 +15,76 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+import static android.os.Build.VERSION_CODES.N;
+
 public class ListActivity extends AppCompatActivity {
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
+    TextView display;
 
-        TextView display;
+    FirebaseDatabase database;
+    DatabaseReference postRef;
 
-        FirebaseDatabase database;
-        DatabaseReference postsRef;
-        DatabaseReference postRef;
-        ArrayList<BlogPost> posts;
+    ArrayList<BlogPost> posts;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_list);
+        database = FirebaseDatabase.getInstance();
+        postRef = database.getReference("posts");
 
-            database = FirebaseDatabase.getInstance();
-            postRef = database.getReference("post");
-            postsRef = database.getReference("posts");
+        posts = new ArrayList<>();
 
-            posts = new ArrayList<>();
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
-            display = (TextView)findViewById(R.id.displayList);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
 
-            postsRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    BlogPost post = dataSnapshot.getValue(BlogPost.class);
-                    posts.add(post);
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-                    String results = "";
-                    for (BlogPost p:posts){
-                        results += p + "\n";
-                    }
-                    display.setText(results);
-                }
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapter(posts);
+        mRecyclerView.setAdapter(mAdapter);
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Toast.makeText(ListActivity.this,dataSnapshot.getValue(BlogPost.class)+" has changed", Toast.LENGTH_SHORT).show();
-                }
+        postRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                BlogPost post = dataSnapshot.getValue(BlogPost.class);
+                posts.add(post);
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Toast.makeText(ListActivity.this,dataSnapshot.getValue(BlogPost.class)+" is removed", Toast.LENGTH_SHORT).show();
-                }
+                mAdapter.notifyDataSetChanged();
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            // When it detects that some children are added
 
-                }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+            }
 
-                }
-            });
-            display.setVisibility(View.VISIBLE);
-        }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
-
-//    ArrayList<BlogPost> posts;
-//    TextView display;
-//    FirebaseDatabase database;
-//    DatabaseReference postsRef;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_list);
-//
-//        database = FirebaseDatabase.getInstance();
-//        postsRef = database.getReference("posts.");
-//
-//        posts = new ArrayList<>();
-//        display = (TextView) findViewById(R.id.display);
-//
-//
-//        postsRef.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//          BlogPost post = dataSnapshot.getValue(BlogPost.class);
-//                posts.add(post);
-//
-//                String results = "";
-//                for(BlogPost p : posts)
-//                {
-//                    results +=p +"\n";
-//                }
-//                    display.setText(results);
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//        display.setVisibility(View.VISIBLE);
-//    }
-//}
+}

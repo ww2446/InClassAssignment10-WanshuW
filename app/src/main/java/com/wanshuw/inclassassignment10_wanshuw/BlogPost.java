@@ -45,7 +45,7 @@ public class BlogPost {
         this.time = time;
     }
 
-    private String toReadableTime() {
+    public String toReadableTime() {
         long postTime = Long.valueOf(time);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(postTime);

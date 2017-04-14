@@ -12,17 +12,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.wanshuw.inclassassignment10_wanshuw.ListActivity">
 
-    <TextView
-        android:id="@+id/displayList"
+    <!-- A RecyclerView with some commonly used attributes -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:background="#eeeeee"
-        android:visibility="invisible"/>
-    <!--&lt;!&ndash; A RecyclerView with some commonly used attributes &ndash;&gt;-->
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/my_recycler_view"-->
-        <!--android:scrollbars="vertical"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
+        android:layout_height="match_parent"/>
+
 </LinearLayout>
