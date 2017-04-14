@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/title"
         android:textColor="#689F38"
-        android:padding="5dp"
+        android:padding="6dp"
         android:background="#eeeeee"
         android:textSize="18sp"/>
 
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/time"
-        android:padding="5dp"
+        android:padding="6dp"
 
         android:textColor="#757575"
         android:background="#eeeeee"
@@ -32,7 +32,7 @@
     <TextView
 
         android:layout_width="match_parent"
-        android:padding="5dp"
+        android:padding="6dp"
 
         android:layout_height="wrap_content"
         android:id="@+id/body"
