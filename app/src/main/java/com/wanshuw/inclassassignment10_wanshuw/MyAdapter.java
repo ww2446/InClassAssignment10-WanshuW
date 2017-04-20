@@ -51,7 +51,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // create a new view
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
-        // set the view's size, margins, paddings and layout parameters
+        // set the view's size, margins, padding and layout parameters
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
