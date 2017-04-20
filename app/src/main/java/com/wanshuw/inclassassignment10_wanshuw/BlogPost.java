@@ -1,12 +1,13 @@
 package com.wanshuw.inclassassignment10_wanshuw;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * Created by candice on 2017/4/5.
  */
 
-public class BlogPost {
+public class BlogPost implements Serializable {
     String title;
     String body;
     String time;

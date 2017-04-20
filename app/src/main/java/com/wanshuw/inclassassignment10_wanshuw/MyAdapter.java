@@ -1,5 +1,7 @@
 package com.wanshuw.inclassassignment10_wanshuw;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ArrayList<BlogPost> mDataset;
+    Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -36,8 +39,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(ArrayList<BlogPost> myDataset) {
+    public MyAdapter(ArrayList<BlogPost> myDataset, Context context) {
         mDataset = myDataset;
+        mContext = context;
     }
 
     // Create new views (invoked by the layout manager)
@@ -54,13 +58,23 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 //         holder.mTextView.setText(mDataset[position]);
             holder.mTitle.setText(mDataset.get(position).getTitle());
             holder.mTime.setText(mDataset.get(position).toReadableTime());
             holder.mBody.setText(mDataset.get(position).getBody());
+        holder.mTitle.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(mContext,DetailActivity.class);
+                intent.putExtra("A blogpost", mDataset.get(holder.getAdapterPosition()));
+                mContext.startActivity(intent);
+            }
+
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
