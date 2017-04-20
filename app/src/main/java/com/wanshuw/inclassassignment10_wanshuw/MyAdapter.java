@@ -27,14 +27,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
        public TextView mTitle;
         public TextView mTime;
         public TextView mBody;
-
+        public View mView;
 
         public ViewHolder(View v) {
             super(v);
             mTitle = (TextView)v.findViewById(R.id.title);
             mTime = (TextView)v.findViewById(R.id.time);
             mBody = (TextView)v.findViewById(R.id.body);
-
+mView=v;
         }
     }
 
@@ -65,7 +65,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             holder.mTitle.setText(mDataset.get(position).getTitle());
             holder.mTime.setText(mDataset.get(position).toReadableTime());
             holder.mBody.setText(mDataset.get(position).getBody());
-        holder.mTitle.setOnClickListener(new View.OnClickListener(){
+        holder.mView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view)
             {
